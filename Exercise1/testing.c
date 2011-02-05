@@ -114,6 +114,13 @@ test_str_buf_put_buf(){
 	assert(strcmp(str_buf_head(b3),"abcdefg")==0);
 }
 
+void test_str_buf_put_substr(){
+    str_buf *b1;
+	b1 = str_buf_alloc(10);
+	assert(str_buf_put_substr(b1,"abcdef",2));
+	assert(strcmp(str_buf_head(b1),"ab")==0);
+}
+
 int main (int argc, char const *argv[]){
 	// ... (other test calls)
 	test_str_buf_alloc();
@@ -124,6 +131,7 @@ int main (int argc, char const *argv[]){
 	test_str_buf_concat();
 	test_str_buf_put_str();
 	test_str_buf_put_buf();
+	test_str_buf_put_substr();
 
 	printf("Tests have succeeded\n");
     return 0;
