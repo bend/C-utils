@@ -10,7 +10,7 @@ struct str_buf{
 str_buf * 
 str_buf_alloc(size_t size){
     str_buf *myBuffer;
-	myBuffer = malloc(sizeof(*myBuffer));	
+	myBuffer = malloc(sizeof(struct str_buf));	
 	myBuffer->buffer = malloc(size);
 	myBuffer->length=0;
 	myBuffer->size = size;
@@ -25,7 +25,7 @@ str_buf_alloc_str(const char * str){
     size_t len;
     int i;
 	len= strlen(str);
-	myBuffer = malloc(sizeof(*myBuffer));
+	myBuffer = malloc(sizeof(struct str_buf));
 	myBuffer->buffer = malloc(len);
 	if(myBuffer->buffer == NULL)		/* if malloc faild, return false */
 	    return NULL;
@@ -40,7 +40,7 @@ str_buf *
 str_buf_alloc_substr(const char * str, size_t str_len){
     str_buf *myBuffer;
     int i;
-	myBuffer = malloc(sizeof(*myBuffer));
+	myBuffer = malloc(sizeof(struct str_buf));
 	myBuffer->buffer = malloc(str_len);
 	if(myBuffer->buffer == NULL)		/* if malloc faild, return false */
 	    return NULL;
@@ -53,8 +53,8 @@ str_buf_alloc_substr(const char * str, size_t str_len){
 
 void 
 str_buf_free(str_buf * buf){
+    free(buf->buffer);
     free(buf);
-    buf = NULL;
 }
 
 const char *
@@ -99,7 +99,13 @@ str_buf_concat(str_buf * buf1, str_buf * buf2){
 
 bool
 str_buf_equals(str_buf * buf1, str_buf * buf2){
-    return (strcmp(str_buf_head(buf1),str_buf_head(buf2))==0);
+    if(buf1->length != buf2->length)		/* if the size of the 2 strings differs, return false */ 
+	return false;
+    int i;
+	for(i=0; i<str_buf_len(buf1);i++)
+	    if(buf1->buffer[i]!= buf2->buffer[i])/* if the character is not the same return false 	*/
+		return false;
+    return true;
 }
 
 bool 

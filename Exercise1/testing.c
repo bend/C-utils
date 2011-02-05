@@ -7,12 +7,12 @@ void
 test_str_buf_alloc(){
     str_buf *b1;
     str_buf *b2;
-    
 	b1 = str_buf_alloc(10);
 	assert(str_buf_len(b1) == 0);
-    
 	b2 = str_buf_alloc_str("abc");
 	assert(str_buf_len(b2)==3);
+	str_buf_free(b1);
+	str_buf_free(b2);
 }
 
 void
@@ -31,6 +31,7 @@ test_str_buf_head(){
 	b1 = str_buf_alloc_str("abc");
 	assert(strcmp(str_buf_head(b1) , "abc")==0);
 	assert(str_buf_len(b1)==3);
+	str_buf_free(b1);
 }
 
 void
@@ -42,6 +43,8 @@ test_str_buf_alloc_substr(){
 	assert(strcmp(str_buf_head(b1) , "abcd")==0);
 	assert(str_buf_equals(b1,b2));
 	assert(str_buf_len(b1)==4);
+	str_buf_free(b1);
+	str_buf_free(b2);
 }
 
 void
@@ -51,6 +54,8 @@ test_str_buf_len(){
 	b2 = str_buf_alloc_str("abc");
 	assert(str_buf_len(b1)==0);
 	assert(str_buf_len(b2)==3);
+        str_buf_free(b1);
+        str_buf_free(b2);
 }
 
 void 
@@ -74,6 +79,7 @@ test_str_buf_concat(){
 	assert(str_buf_equals(b4, b2));
 	
 	b5 = str_buf_concat(b2, b1);
+	    
 	assert(str_buf_equals(b5, b2));
 	assert(str_buf_len(b5) == 3);
 	
@@ -95,6 +101,7 @@ void test_str_buf_put_str(){
 	b1 = str_buf_alloc(10);
 	assert(str_buf_put_str(b1,"abcdef"));
 	assert(strcmp(str_buf_head(b1),"abcdef")==0);
+        str_buf_free(b1);
 }
 
 void
@@ -112,6 +119,10 @@ test_str_buf_put_buf(){
 	assert(str_buf_put_str(b3,"abcd"));
 	assert(str_buf_put_buf(b3,b4));
 	assert(strcmp(str_buf_head(b3),"abcdefg")==0);
+        str_buf_free(b1);
+        str_buf_free(b2);
+        str_buf_free(b3);
+        str_buf_free(b4);
 }
 
 void test_str_buf_put_substr(){
@@ -119,10 +130,10 @@ void test_str_buf_put_substr(){
 	b1 = str_buf_alloc(10);
 	assert(str_buf_put_substr(b1,"abcdef",2));
 	assert(strcmp(str_buf_head(b1),"ab")==0);
+        str_buf_free(b1);
 }
 
 int main (int argc, char const *argv[]){
-	// ... (other test calls)
 	test_str_buf_alloc();
 	test_str_buf_free();
 	test_str_buf_head();
