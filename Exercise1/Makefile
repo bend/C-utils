@@ -1,6 +1,6 @@
-all: test
+all: str_buf.o
 
-test: str_buf.o testing.o
+tests: str_buf.o testing.o
 	gcc -o test str_buf.o testing.o
 	./test
 str_buf.o: str_buf.c
