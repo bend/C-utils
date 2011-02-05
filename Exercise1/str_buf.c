@@ -130,6 +130,14 @@ str_buf_put_str(str_buf * buf, const char * str){
 
 bool
 str_buf_put_substr(str_buf * buf, const char * str, size_t str_len){
-
+    int i;
+    int j;
+	if(str_buf_size(buf)< str_buf_len(buf)+str_len)			/* check if the buf size is big enough append the substring of str to buf1*/
+	    return false;
+	for (i=str_buf_len(buf),j=0; j<str_len; i++,j++){
+	    buf->buffer[i] = str[j];					/* append substring of str to buf */
+	    buf->length++;
+	}
+	return true;
 
 }
