@@ -156,7 +156,6 @@ executeProc(int nbProc){
             strncpy(domain[i],tab+lastIndex,nbElemForEach);         /* setting the char in the array . This array is the domain , it contains the char that the thread will test*/
             lastIndex+=nbElemForEach;
             if(strlen(domain[i])>0){
-                
                 pId= fork();                                    /* forking the process */
                 if (pId == 0){ /*Child process */
                     runInProc(domain[i]);                       /* call the generatePass function */
@@ -170,9 +169,8 @@ executeProc(int nbProc){
                 }
             }
         }
-          
-        wait(0);
-		kill(getppid(),SIGKILL);
+       /*kill(getppid(),SIGKILL);*/
+       wait(0);
        free(domain);
 }
 
