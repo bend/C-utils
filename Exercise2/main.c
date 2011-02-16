@@ -172,7 +172,7 @@ executeProc(int nbProc){
         }
           
         wait(0);
-		kill(getppid(),SIGKILL);
+	/*kill(getppid(),SIGKILL);*/
        free(domain);
 }
 
