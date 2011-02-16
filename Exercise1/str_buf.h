@@ -14,7 +14,6 @@
 #include <stdio.h>
 #include <string.h>
 
-
 struct str_buf;
 
 typedef struct str_buf str_buf;
