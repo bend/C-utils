@@ -169,8 +169,9 @@ executeProc(int nbProc){
                 }
             }
         }
-       /*kill(getppid(),SIGKILL);*/
-       wait(0);
+          
+        wait(0);
+	   /*kill(getppid(),SIGKILL);*/
        free(domain);
 }
 
