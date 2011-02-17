@@ -3,7 +3,7 @@
 
 #include "zip_crack.h"
 #include "cracker.h"
-#include "fileReader.h"
+#include "file_reader.h"
 
 void
 usage (void)
@@ -14,8 +14,16 @@ usage (void)
 int 
 main (int argc, char const * argv[])
 {
-    int i;
+  int i;
+	FILE *f;
+	
+
     struct zip_archive * archive;
+
+
+	f= open_file("/Users/benoitdaccache/Documents/Programation/C-System/Exercise3/test.txt");
+	printf("%s\n",get_next(f));
+
 
     if (argc < 2) {
         usage();
