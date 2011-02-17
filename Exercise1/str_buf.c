@@ -10,12 +10,16 @@ struct str_buf{
 str_buf * 
 str_buf_alloc(size_t size){
     str_buf *myBuffer;
-	myBuffer = malloc(sizeof(struct str_buf));	
+	myBuffer = malloc(sizeof(struct str_buf));
+	if(myBuffer == NULL)
+		return NULL;
 	myBuffer->buffer = malloc(size);
 	myBuffer->length=0;
 	myBuffer->size = size;
-	if(myBuffer->buffer == NULL)		/* if malloc faild, return false */
+	if(myBuffer->buffer == NULL){	/* if malloc faild, return false */
+		free(myBuffer);
 	    return NULL;
+	}	
 	return myBuffer;
 }
 
@@ -26,9 +30,13 @@ str_buf_alloc_str(const char * str){
     int i;
 	len= strlen(str);
 	myBuffer = malloc(sizeof(struct str_buf));
+	if(myBuffer == NULL)
+	        return NULL;
 	myBuffer->buffer = malloc(len);
-	if(myBuffer->buffer == NULL)		/* if malloc faild, return false */
-	    return NULL;
+	if(myBuffer->buffer == NULL){/* if malloc faild, return false */
+	    free(myBuffer);
+		return NULL;
+	}	
 	for(i=0; i<len; i++)
 	    myBuffer->buffer[i] = str[i];	/* put the string into the buffer */
 	myBuffer->length = len;			/* setting length  		  */
@@ -41,9 +49,13 @@ str_buf_alloc_substr(const char * str, size_t str_len){
     str_buf *myBuffer;
     int i;
 	myBuffer = malloc(sizeof(struct str_buf));
+	if(myBuffer == NULL)
+	        return NULL;
 	myBuffer->buffer = malloc(str_len);
-	if(myBuffer->buffer == NULL)		/* if malloc faild, return false */
-	    return NULL;
+	if(myBuffer->buffer == NULL){		/* if malloc faild, return false */
+	    free(myBuffer);
+		return NULL;
+	}
 	for(i=0; i<str_len; i++)
 	    myBuffer->buffer[i] = str[i];	/* put the string into the buffer */
 	myBuffer->length = str_len;		/* setting length  		  */
@@ -85,9 +97,13 @@ str_buf_concat(str_buf * buf1, str_buf * buf2){
 	str1 = str_buf_head(buf1);
 	str2 = str_buf_head(buf2);
 	myBuffer = malloc(sizeof(*myBuffer));
+	if(myBuffer == NULL)
+	        return NULL;
 	myBuffer->buffer = malloc(len1+len2);
-	if(myBuffer->buffer == NULL)		/* if malloc faild, return false */
-	    return NULL;
+	if(myBuffer->buffer == NULL){/* if malloc faild, return false */
+	   free(myBuffer);
+	   return NULL;
+	}
 	for(i=0; i<len1; i++)			/* putting the string of buf1 in the newBuffer*/
 	    myBuffer->buffer[i] = str1[i];
 	for(j=0;j<len1+len2;i++,j++)		/* appending the string contained in buf2 in the newBuffer */
