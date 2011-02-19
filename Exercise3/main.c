@@ -15,15 +15,19 @@ int
 main (int argc, char const * argv[])
 {
   int i;
-	FILE *f;
-	
 
     struct zip_archive * archive;
 
+	buffer *buf;
+	
+	buf = new_bounded_buffer();
+	
+	fill_bbuffer(buf);
+	for(i=buf->first_pos;i!=buf->last_pos;i++){
+		printf("%s\n",buf->array[i]);
+	}
 
-	f= open_file("/Users/benoitdaccache/Documents/Programation/C-System/Exercise3/test.txt");
-	printf("%s\n",get_next(f));
-
+	
 
     if (argc < 2) {
         usage();

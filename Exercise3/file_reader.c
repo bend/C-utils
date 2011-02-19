@@ -21,7 +21,7 @@ char* get_next(FILE* f){
 	int length;
 	char* final_string;
 		fgets(temp,50,f);
-		if(temp==NULL)
+		if(temp==NULL || temp[0]==EOF)
 			return NULL;
 		length = strlen(temp);
 		if(length<2)

@@ -1,6 +1,17 @@
-#include "zip_crack.h"
-#define BB_SIZE
+#define BB_SIZE 10
+#include <stdio.h>
+#include <stdlib.h>
 
+#include "zip_crack.h"
+
+struct buffer{
+char** array;
+    char* first;
+    char* last;
+    unsigned int first_pos;
+    unsigned int last_pos;
+};
+typedef struct buffer buffer;
 
 /*
 * Creates a bounded buffer of size  BB_Size
@@ -9,7 +20,7 @@
 * A pointer to this  Array is given to the Threads/Process 
 */
 
-char** new_bounded_buffer();
+buffer* new_bounded_buffer();
 
 
 /*
@@ -17,18 +28,18 @@ char** new_bounded_buffer();
 *
 *
 */
-void add(char** bb, char* str);
+void add(buffer *buf,  char* str);
 
-
-void get(char** bb);
-
-
+/* removes and return the first added entry in the BB
+*/
+char* get(buffer *buf);
 
 /*
-* Stats the cracking routine, by creating N Threads/proc
+* Fills the bounded buffer
 */
+void fill_bbuffer(buffer *buf);
 
-void begin(unsigned int nbThreads);
+
 
 
 
