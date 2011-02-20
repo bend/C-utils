@@ -8,18 +8,21 @@ crack_password(void* arg){
 	struct zip_archive * archive;
 		p =(params*)arg;
 		buf = p->buf;
-		printf("consumer buffer name%s\n",buf->name);
-		printf("%d\n",&buf);
+		printf("consumer buffer name %s\n",buf->name);
 		if ((archive = zip_load_archive(p->filename)) == NULL) {
 			printf("Unable to open archive %s\n", p->filename);
 			exit(-1);
 		 }
-		sleep(5);
-		printf("here\n");
+		while(1){
+			printf("size = %d\n",buf->nb_elem);
+			printf("first_pos =%d, last =%d\n",buf->first_pos, buf->last_pos);
+			sleep(1);
+			printf("%s\n",bounded_buffer_get(buf));
+			}
 		do{	
 			printf("consumer_wait\n");
-			//sem_wait(p->full);
-			//pthread_mutex_lock(p->mutex);
+			sem_wait(p->full);
+			pthread_mutex_lock(p->mutex);
 			pass = bounded_buffer_get(buf);
 			printf("testing %s\n",pass);
 			if(zip_test_password(archive, pass) == 0) {
@@ -30,8 +33,8 @@ crack_password(void* arg){
 					free(p);
 					exit(0);
 			}
-			//pthread_mutex_unlock(p->mutex);
-			//sem_post(p->empty);
+			pthread_mutex_unlock(p->mutex);
+			sem_post(p->empty);
 			printf("conusmer ++\n");
 		}while(pass != NULL);
 
@@ -61,15 +64,15 @@ fill_buffer(void* arg){
 
 		do{
 			printf("producer_wait\n");
-			//sem_wait(p->empty);
-			//pthread_mutex_lock(p->mutex);
+			sem_wait(p->empty);
+			pthread_mutex_lock(p->mutex);
 			if(buf->nb_elem < buf->size){
 				temp = get_next(file);
 				printf("producer  add %s\n",temp);
 				bounded_buffer_put(buf, temp);
 			}
-			//	pthread_mutex_unlock(p->mutex);
-		//sem_post(p->full);
+			pthread_mutex_unlock(p->mutex);
+			sem_post(p->full);
 			printf("producer_end_put\n");
 			sleep(1);
 		}while(temp!=NULL);
@@ -94,7 +97,7 @@ create_threads(unsigned int nb_threads, buffer* buf, char* file_to_crack, char* 
 
 		pthread_mutex_init(mutex, NULL);				/* Create the mutex lock */
 	    sem_init(full, 0, 0);							/* Create the full semaphore and initialize to 0 */
-	    sem_init(empty, 0, buf->size);					/* Create the empty semaphore and initialize to BUFFER_SIZE */
+		sem_init(empty, 0, buf->size);					/* Create the empty semaphore and initialize to BUFFER_SIZE */
 		
 		threads = malloc(sizeof(pthread_t)*nb_threads+1);			/* nb_threads+1 for storing the bounded_buffer thread*/
 		if(threads == NULL){
@@ -143,7 +146,7 @@ create_threads(unsigned int nb_threads, buffer* buf, char* file_to_crack, char* 
 		fill_params->full = full;
 		fill_params->empty = empty;
 		fill_params->mutex = mutex;
-		rc =pthread_create(&threads[nb_threads+1],NULL,fill_buffer,(void*)fill_params);
+		rc =pthread_create(&threads[nb_threads],NULL,fill_buffer,(void*)fill_params);
 		if(rc){
 			printf("ERROR; return code from pthread_create() is %d\n", rc);
             free(threads);
