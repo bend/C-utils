@@ -3,7 +3,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-FILE* open_file(const char* path){
+FILE* 
+open_file(const char* path){
 	FILE* f;
 		if((f=fopen(path, "r"))==NULL){
 			perror("cannot open file");
@@ -16,7 +17,8 @@ int close_file(FILE* file){
 	return fclose(file);
 }
 
-char* get_next(FILE* f){
+char*
+get_next(FILE* f){
 	char temp[50];
 	int length;
 	char* final_string;

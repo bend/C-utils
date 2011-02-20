@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 #include "zip_crack.h"
-#include "cracker.h"
+#include "bounded_buffer.h"
 #include "file_reader.h"
 
 void
@@ -20,9 +20,9 @@ main (int argc, char const * argv[])
 
 	buffer *buf;
 	
-	buf = new_bounded_buffer();
+	buf = bounded_buffer_new(5);
 	
-	fill_bbuffer(buf);
+	bounded_buffer_fill(buf);
 	for(i=buf->first_pos;i!=buf->last_pos;i++){
 		printf("%s\n",buf->array[i]);
 	}
