@@ -2,5 +2,7 @@
 test
 *.swp
 rarcrack
+zipcrack
 .DS_Store
-
+.zip
+.rar
