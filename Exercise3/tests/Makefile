@@ -1,19 +1,22 @@
 CC=gcc
 CFLAGS=-W -Wall -Werror -ansi -pedantic
-EXEC = test_file
+EXEC = tests
 
 all: $(EXEC)
-$(EXEC): file_reader.o test_file_reader.o
-		$(CC) -o $(EXEC) file_reader.o test_file_reader.o
+
+$(EXEC): testing.o file_reader.o bounded_buffer.o
+	$(CC) -o tests testing.o file_reader.o bounded_buffer.o 
 file_reader.o: ../file_reader.c
-		$(CC) -o file_reader.o -c ../file_reader.c $(CFLAGS)
-file_test.o: file_test.c file_reader.h
-		$(CC) -o file_reader.o -c test_file_reader.c $(CFLAGS)
+	$(CC) -o file_reader.o -c ../file_reader.c $(CFLAGS)
+bounded_buffer.o: ../bounded_buffer.c
+	$(CC) -o bounded_buffer.o -c ../bounded_buffer.c $(CFLAGS)
+testing.o: testing.c ../file_reader.h ../bounded_buffer.h
+	$(CC) -o testing.o -c testing.c $(CFLAGS)
 
 .PHONY: clean mrproper
-				            
+                            
 clean:
-		@rm *.o
+	@rm *.o
 mrproper: clean
-		@rm $(EXEC)
+	@rm $(EXEC)
 
