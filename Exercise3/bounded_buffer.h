@@ -15,6 +15,7 @@ struct buffer{
     unsigned int last_pos;
 	unsigned int nb_elem;
 	unsigned int size;
+	char* name;
 };
 typedef struct buffer buffer;
 
