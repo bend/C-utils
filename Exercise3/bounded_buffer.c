@@ -1,5 +1,4 @@
 #include "bounded_buffer.h"
-#include "file_reader.h"
 
 buffer*  
 bounded_buffer_new(unsigned int size){
@@ -23,26 +22,6 @@ bounded_buffer_new(unsigned int size){
 	return buf;
 }
 
-
-void
-bounded_buffer_fill(buffer *buf){
-	int i;
-	FILE *file;
-	char* path= "tests/tests.txt";
-	char* t;
-
-	i=0;
-	file = open_file(path);					/* Open file 		*/
-	t=get_next(file);
-	while(t!=NULL && i<(int)buf->size){				/* fill buffer */
-		buf->array[i++] = t;
-		t=get_next(file);
-	}
-	buf->first_pos = 0;							
-	buf->last_pos = i;
-											/* Waits for a slot to be free to fill it */
-	close_file(file);
-}
 
 
 char* 

@@ -18,16 +18,6 @@ main (int argc, char const * argv[])
 
     struct zip_archive * archive;
 
-	buffer *buf;
-	
-	buf = bounded_buffer_new(5);
-	
-	bounded_buffer_fill(buf);
-	for(i=buf->first_pos;i!=buf->last_pos;i++){
-		printf("%s\n",buf->array[i]);
-	}
-
-	
 
     if (argc < 2) {
         usage();

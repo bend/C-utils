@@ -1,5 +1,6 @@
 #ifndef __BOUNDED_BUFFER_H__
 #define __BOUNDED_BUFFER_H__
+
 #define BUFFER_FULL -1;
 #define BUFFER_SUCCESS 0;
 
@@ -44,10 +45,6 @@ char* bounded_buffer_get(buffer *buf);
 */
 void bounded_buffer_free(buffer *buf);
 
-/*
-* Fills the bounded buffer
-*/
-void bounded_buffer_fill(buffer *buf);
 
 
 #endif
