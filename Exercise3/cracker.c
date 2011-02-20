@@ -8,35 +8,27 @@ crack_password(void* arg){
 	struct zip_archive * archive;
 		p =(params*)arg;
 		buf = p->buf;
-		printf("consumer buffer name %s\n",buf->name);
 		if ((archive = zip_load_archive(p->filename)) == NULL) {
 			printf("Unable to open archive %s\n", p->filename);
 			exit(-1);
 		 }
-		while(1){
-			printf("size = %d\n",buf->nb_elem);
-			printf("first_pos =%d, last =%d\n",buf->first_pos, buf->last_pos);
-			sleep(1);
-			printf("%s\n",bounded_buffer_get(buf));
-			}
 		do{	
-			printf("consumer_wait\n");
 			sem_wait(p->full);
-			pthread_mutex_lock(p->mutex);
+			//pthread_mutex_lock(p->mutex);
 			pass = bounded_buffer_get(buf);
-			printf("testing %s\n",pass);
+			if(pass != NULL){
+				printf("test pass %s\n",pass);
 			if(zip_test_password(archive, pass) == 0) {
 					printf("Password is: %s\n", pass);
 					free(pass);
 					bounded_buffer_free(buf);
-					free(p->filename);
 					free(p);
 					exit(0);
 			}
-			pthread_mutex_unlock(p->mutex);
+			}
+			//pthread_mutex_unlock(p->mutex);
 			sem_post(p->empty);
-			printf("conusmer ++\n");
-		}while(pass != NULL);
+		}while(1);
 
 		pthread_exit(NULL);
 
@@ -47,34 +39,23 @@ void*
 fill_buffer(void* arg){
 	params* p;
 	buffer* buf;
-	int i;
 	char* temp;
 	FILE* file;
 		p=(params*)arg;
 		buf=p->buf;
 		file = open_file(p->filename);    /*            		  Open file        */
-		//temp=get_next(file);
-		i=0;
-		printf("producer buf name %s\n",buf->name);
-		/*while(temp!=NULL && i<(int)buf->size){          * first fill of the buffer *
-			bounded_buffer_put(buf,temp);
-			temp=get_next(file);
-			i++;
-		}*/
-
 		do{
-			printf("producer_wait\n");
+			/*FIXME Problem with semaphores */
+			
 			sem_wait(p->empty);
-			pthread_mutex_lock(p->mutex);
+			//pthread_mutex_lock(p->mutex);
 			if(buf->nb_elem < buf->size){
 				temp = get_next(file);
 				printf("producer  add %s\n",temp);
 				bounded_buffer_put(buf, temp);
 			}
-			pthread_mutex_unlock(p->mutex);
+			//pthread_mutex_unlock(p->mutex);
 			sem_post(p->full);
-			printf("producer_end_put\n");
-			sleep(1);
 		}while(temp!=NULL);
 
 
@@ -118,7 +99,6 @@ create_threads(unsigned int nb_threads, buffer* buf, char* file_to_crack, char* 
 		crack_params->full = full;
 		crack_params->mutex = mutex;
 		crack_params->buf = buf;
-		printf("$$$ %s\n",crack_params->buf->name);
 		for(i=0; i<nb_threads; i++){						/* create crack threads */
 			rc = pthread_create(&threads[i],NULL,crack_password,(void*)crack_params);   /*Creating thread*/
 			if (rc){
@@ -130,7 +110,6 @@ create_threads(unsigned int nb_threads, buffer* buf, char* file_to_crack, char* 
 			}
 		}
 
-		printf("$$$ %s\n",crack_params->buf->name);
 
 		
 		fill_params = malloc(sizeof(params*));
@@ -174,7 +153,6 @@ void create_process(unsigned int nb_process, buffer* buff, char* file_to_crack, 
 void start_cracking(char tp, unsigned int nb_pt, char* file_to_crack, char* dictionary_file){
 	buffer* buf;
 		buf=bounded_buffer_new(10);
-		buf->name = "ben";
 		if(tp=='p')
 			create_process(nb_pt, buf,file_to_crack, dictionary_file);
 		else
