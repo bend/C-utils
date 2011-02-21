@@ -1,5 +1,9 @@
 #include "cracker.h"
 #include <string.h>
+
+
+sem_t sem;
+
 void*
 crack_password(void* arg){
   	params* p;
@@ -13,8 +17,8 @@ crack_password(void* arg){
 			exit(-1);
 		 }
 		do{	
-			sem_wait(p->full);
-			//pthread_mutex_lock(p->mutex);
+			sem_wait(&sem);
+			pthread_mutex_lock(p->mutex);
 			pass = bounded_buffer_get(buf);
 			if(pass != NULL){
 				printf("test pass %s\n",pass);
@@ -27,7 +31,7 @@ crack_password(void* arg){
 			}
 			}
 			//pthread_mutex_unlock(p->mutex);
-			sem_post(p->empty);
+			sem_post(&sem);
 		}while(1);
 
 		pthread_exit(NULL);
@@ -47,7 +51,7 @@ fill_buffer(void* arg){
 		do{
 			/*FIXME Problem with semaphores */
 			
-			sem_wait(p->empty);
+			sem_wait(&sem);
 			//pthread_mutex_lock(p->mutex);
 			if(buf->nb_elem < buf->size){
 				temp = get_next(file);
@@ -55,7 +59,7 @@ fill_buffer(void* arg){
 				bounded_buffer_put(buf, temp);
 			}
 			//pthread_mutex_unlock(p->mutex);
-			sem_post(p->full);
+			sem_post(&sem);
 		}while(temp!=NULL);
 
 
@@ -75,10 +79,10 @@ create_threads(unsigned int nb_threads, buffer* buf, char* file_to_crack, char* 
 	sem_t *empty;
 	pthread_mutex_t *mutex;
 		
-
-		pthread_mutex_init(mutex, NULL);				/* Create the mutex lock */
-	    sem_init(full, 0, 0);							/* Create the full semaphore and initialize to 0 */
-		sem_init(empty, 0, buf->size);					/* Create the empty semaphore and initialize to BUFFER_SIZE */
+		sem_init(&sem, 0, 1);
+		//pthread_mutex_init(mutex, NULL);				/* Create the mutex lock */
+	    sem_init(full, 0, 1);							/* Create the full semaphore and initialize to 0 */
+		//sem_init(empty, 0, buf->size);					/* Create the empty semaphore and initialize to BUFFER_SIZE */
 		
 		threads = malloc(sizeof(pthread_t)*nb_threads+1);			/* nb_threads+1 for storing the bounded_buffer thread*/
 		if(threads == NULL){
