@@ -4,5 +4,5 @@ test
 rarcrack
 zipcrack
 .DS_Store
-.zip
-.rar
+*.zip
+*.rar
