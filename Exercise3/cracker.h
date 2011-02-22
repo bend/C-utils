@@ -4,15 +4,22 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <semaphore.h>
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
+#include <unistd.h>
 
 #include "bounded_buffer.h"
 #include "file_reader.h"
 
+#define SHMSZ     27
+
 struct params{
 	buffer* buf;
-	char* filename;
-	sem_t *empty;
-	sem_t *full;
+	char* dictionary;
+	char* zipfile;
+	sem_t* empty;
+	sem_t* full;
 	pthread_mutex_t *mutex;
 };
 
@@ -54,9 +61,9 @@ void create_process(unsigned int nb_process, buffer* buff, char* file_to_crack, 
 */
 void start_cracking(char tp, unsigned int nb_pt, char* file_to_crack, char* dictionary_file);
 
+params* create_mem_segment(key_t key );
 
-
-
+params*  get_mem_segment(key_t key );
 #endif
 
 

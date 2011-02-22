@@ -14,7 +14,7 @@ main (int argc, char const * argv[])
 {
  
  
-start_cracking('t',1, "/Users/benoitdaccache/Documents/Programation/C-System/Exercise3/zips/file1.zip", "/Users/benoitdaccache/Documents/Programation/C-System/Exercise3/dico.txt");
+start_cracking('p',1, "/Users/benoitdaccache/Documents/Programation/C-System/Exercise3/zips/file1.zip", "/Users/benoitdaccache/Documents/Programation/C-System/Exercise3/dico.txt");
  
  
  

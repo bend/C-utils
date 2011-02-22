@@ -1,4 +1,4 @@
-CFLAGS+=-Wall -Lpthread -Werror -ansi -pedantic
+CFLAGS+=-Wall -Lpthread -Werror -ansi -pedantic -g
 EXEC=zipcrack
 SOURCES=$(wildcard *.c)
 OBJECTS=$(SOURCES:.c=.o)
