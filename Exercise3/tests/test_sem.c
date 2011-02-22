@@ -3,15 +3,15 @@
 #include <semaphore.h>
 #include <pthread.h>
 
-sem_t sem;
+sem_t *sem;
 
 void* 
 producer(void* arg){
 	while(1){
-		sem_wait(&sem);
+		sem = sem_open("MySemaphore", (O_CREAT|O_EXCL), S_IRWXU, 0) ;
 		printf("Im thread %d\n",1);
-		sleep(10);
-		sem_post(&sem);
+		sem_unlink(sem);
+		sem_close(sem);
 	}
 	return NULL;
 
@@ -22,10 +22,9 @@ producer(void* arg){
 void*
 consumer(void* arg){
 	while(1){
-		sem_wait(&sem);
+		sem_wait(sem);
 		printf("Im thread %d\n",2);
-		sleep(1);
-		sem_post(&sem);
+		sem_post(sem);
 	}
 	return NULL;
 }
@@ -34,7 +33,6 @@ consumer(void* arg){
 
 int main(){
 	pthread_t prod, cons, prod2,cons2;
-	sem_init(&sem, 0, 1);
 
 
 	pthread_create(&prod, NULL, producer,(void*)1);

@@ -8,7 +8,6 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <unistd.h>
-
 #include "bounded_buffer.h"
 #include "file_reader.h"
 
