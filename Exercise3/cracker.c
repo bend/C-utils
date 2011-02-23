@@ -71,8 +71,8 @@ create_threads(unsigned int nb_threads, buffer* buf, char* file_to_crack, char* 
 	sem_t *full;
 	sem_t *empty;
 	pthread_mutex_t *mutex;
-	empty = sem_open("semshm",O_CREAT , 0600, buf->size);          
-	full = sem_open("semshm2",O_CREAT , 0600, 0);
+	empty = sem_open("semshm12AAAA34",O_CREAT , 0600,0);          
+	full = sem_open("semshm2341235",O_CREAT , 0600, 0);
 		
 		threads = malloc(sizeof(pthread_t)*nb_threads+1);			/* nb_threads+1 for storing the bounded_buffer thread*/
 		if(threads == NULL){

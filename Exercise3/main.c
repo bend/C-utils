@@ -50,16 +50,15 @@ main (int argc, char ** argv)
                 case 't':
                     tflag = (char*)optarg;
                     break;
-		case 'd':
-		    dflag = (char*)optarg;
-		    break;
+				case 'd':
+		    		dflag = (char*)optarg;
+		    		break;
             }
         }
        
-        file = malloc(strlen(argv[argc]));
-	strcat(file, argv[argc]);
-        checkParams(file, pflag, tflag,dflag); /*Exits if arguments are wrong*/
-
+        file = argv[argc-1];
+		/*checkParams(file, pflag, tflag,dflag);*/ /*Exits if arguments are wrong*/
+	
 	if(pflag){
 	    start_cracking('p',atoi(pflag), file, dflag);
 	}else{
