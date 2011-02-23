@@ -15,6 +15,7 @@ bounded_buffer_new(unsigned int size){
 		perror("malloc error");
 		exit(-1);
 	}
+	buf->mutex = malloc(sizeof(pthread_mutex_t*));
 	buf->last_pos = 0;
 	buf->first_pos =0;
 	buf->nb_elem = 0;
@@ -27,22 +28,30 @@ bounded_buffer_new(unsigned int size){
 char* 
 bounded_buffer_get(buffer *buf){
 	char* str;
-		if(buf->nb_elem == 0)
+		pthread_mutex_lock(buf->mutex);
+		if(buf->nb_elem == 0){
+		  	pthread_mutex_unlock(buf->mutex);
 			return NULL;
+		}
 		str = buf->array[buf->first_pos];
 		buf->first_pos = (buf->first_pos + 1) % buf->size;
 		buf->nb_elem--;
+		pthread_mutex_unlock(buf->mutex);
 		return str;
 }
 
 
 int
 bounded_buffer_put(buffer *buf, char* str){
-	if(buf->nb_elem == buf->size)
+  	pthread_mutex_lock(buf->mutex);
+  	if(buf->nb_elem == buf->size){
+	  	pthread_mutex_unlock(buf->mutex);
 		return BUFFER_FULL;
+	}
 	buf->array[buf->last_pos % buf->size] = str;
 	buf->last_pos = (buf->last_pos + 1) % buf->size;
 	buf->nb_elem++;
+	pthread_mutex_unlock(buf->mutex);
 	return BUFFER_SUCCESS;
 }
 

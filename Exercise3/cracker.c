@@ -1,5 +1,4 @@
 #include "cracker.h"
-#include <string.h>
 
 
 
@@ -17,7 +16,7 @@ crack_password(void* arg){
 		 }
 		sleep(2);
 		do{	
-		  	sem_wait(p->full);
+		  	/*my_sem_wait(p->full);*/
 			pass = bounded_buffer_get(buf);
 			if(pass != NULL){
 				printf("test pass %s\n",pass);
@@ -29,7 +28,7 @@ crack_password(void* arg){
 					exit(0);
 				}
 			}else printf("looping\n");
-			sem_post(p->empty);
+			/*my_sem_post(p->empty);*/
 		}while(1);
 
 		pthread_exit(NULL);
@@ -47,13 +46,13 @@ fill_buffer(void* arg){
 		buf=p->buf;
 		file = open_file(p->dictionary);    /*            		  Open file        */
 		do{
-		  	sem_wait(p->empty);
+		  	/*my_sem_wait(p->empty);*/
 			if(buf->nb_elem < buf->size){
 				temp = get_next(file);
 				printf("producer  add %s\n",temp);
 				bounded_buffer_put(buf, temp);
 			}
-			sem_post(p->full);
+			/*my_sem_post(p->full);*/
 		}while(temp!=NULL);
 
 
@@ -68,12 +67,12 @@ create_threads(unsigned int nb_threads, buffer* buf, char* file_to_crack, char* 
 	int i;
 	int pthread_join_res;
 	params *crack_params;
-	sem_t *full;
-	sem_t *empty;
+	my_sem *full;
+	my_sem *empty;
 	pthread_mutex_t *mutex;
-	empty = sem_open("semshm12AAAA34",O_CREAT , 0600,0);          
-	full = sem_open("semshm2341235",O_CREAT , 0600, 0);
-		
+	
+		empty = my_sem_init(buf->size);          
+		full = my_sem_init(0);
 		threads = malloc(sizeof(pthread_t)*nb_threads+1);			/* nb_threads+1 for storing the bounded_buffer thread*/
 		if(threads == NULL){
 			perror("malloc failed");
@@ -126,10 +125,10 @@ void create_process(unsigned int nb_process, buffer* buff, char* file_to_crack, 
 	params* shared;
 	pid_t pid;
 	int i;
-	sem_t *empty;
-	sem_t *full;
-	empty = sem_open("semshm",O_CREAT , 0600, buff->size);
-	full = sem_open("semshm2",O_CREAT , 0600, 0 );
+	my_sem *empty;
+	my_sem *full;
+	empty = my_sem_init(buff->size);
+	full = my_sem_init(0);
 
 	shared = create_mem_segment(1234);
 	shared->buf = buff;

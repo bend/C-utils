@@ -6,6 +6,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <pthread.h>
 
 #include "zip_crack.h"
 
@@ -16,6 +17,7 @@ struct buffer{
 	unsigned int nb_elem;
 	unsigned int size;
 	char* name;
+	pthread_mutex_t *mutex;
 };
 typedef struct buffer buffer;
 

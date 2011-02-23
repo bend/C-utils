@@ -10,15 +10,15 @@
 #include <unistd.h>
 #include "bounded_buffer.h"
 #include "file_reader.h"
-
+#include "my_sem.h"
 #define SHMSZ     27
 
 struct params{
 	buffer* buf;
 	char* dictionary;
 	char* zipfile;
-	sem_t* empty;
-	sem_t* full;
+	my_sem* empty;
+	my_sem* full;
 	pthread_mutex_t *mutex;
 };
 
