@@ -14,11 +14,11 @@ crack_password(void* arg){
 			printf("Unable to open archive %s\n", p->zipfile);
 			exit(-1);
 		 }
-		sleep(2);
 		do{	
-		  	/*my_sem_wait(p->full);*/
+		  	if (sem_wait(p->full)==-1)
+			 	perror("error sem_wait on full w \n");
 			pass = bounded_buffer_get(buf);
-			if(pass != NULL){
+			/*if(pass != NULL){*/
 				printf("test pass %s\n",pass);
 				if(zip_test_password(archive, pass) == 0) {
 					printf("Password is: %s\n", pass);
@@ -27,8 +27,8 @@ crack_password(void* arg){
 					free(p);
 					exit(0);
 				}
-			}else printf("looping\n");
-			/*my_sem_post(p->empty);*/
+			/*}else printf("looping\n");*/
+			sem_post(p->empty);
 		}while(1);
 
 		pthread_exit(NULL);
@@ -46,16 +46,15 @@ fill_buffer(void* arg){
 		buf=p->buf;
 		file = open_file(p->dictionary);    /*            		  Open file        */
 		do{
-		  	/*my_sem_wait(p->empty);*/
+		  	if(sem_wait(p->empty)==-1)
+			  perror("error on empty");
 			if(buf->nb_elem < buf->size){
 				temp = get_next(file);
 				printf("producer  add %s\n",temp);
 				bounded_buffer_put(buf, temp);
 			}
-			/*my_sem_post(p->full);*/
+			sem_post(p->full);
 		}while(temp!=NULL);
-
-
 	pthread_exit(NULL);
 }
 
@@ -67,12 +66,13 @@ create_threads(unsigned int nb_threads, buffer* buf, char* file_to_crack, char* 
 	int i;
 	int pthread_join_res;
 	params *crack_params;
-	my_sem *full;
-	my_sem *empty;
+	sem_t *full;
+	sem_t *empty;
 	pthread_mutex_t *mutex;
-	
-		empty = my_sem_init(buf->size);          
-		full = my_sem_init(0);
+		sem_unlink("emptySemm");
+		sem_unlink("fullSemm");
+		empty = sem_open("emptySemm",O_CREAT,0666,buf->size);          
+		full = sem_open("fullSemm",O_CREAT,0666,0);
 		threads = malloc(sizeof(pthread_t)*nb_threads+1);			/* nb_threads+1 for storing the bounded_buffer thread*/
 		if(threads == NULL){
 			perror("malloc failed");
@@ -80,7 +80,7 @@ create_threads(unsigned int nb_threads, buffer* buf, char* file_to_crack, char* 
 			exit(-1);
 		}
 		
-		crack_params = malloc(sizeof(params*));
+		crack_params = malloc(sizeof(params));
 		if(crack_params == NULL){
 			perror("malloc failed");
 			free(threads);
@@ -103,7 +103,6 @@ create_threads(unsigned int nb_threads, buffer* buf, char* file_to_crack, char* 
 			    exit(-1);
 			}
 		}
-		
 		rc =pthread_create(&threads[nb_threads],NULL,fill_buffer,(void*)crack_params);
 		if(rc){
 			printf("ERROR; return code from pthread_create() is %d\n", rc);
@@ -118,6 +117,8 @@ create_threads(unsigned int nb_threads, buffer* buf, char* file_to_crack, char* 
 		bounded_buffer_free(buf);
 		free(crack_params);
 		free(threads);
+		sem_unlink("emptySemm");
+		sem_unlink("fullSemm");
 }
 
 
@@ -125,10 +126,10 @@ void create_process(unsigned int nb_process, buffer* buff, char* file_to_crack, 
 	params* shared;
 	pid_t pid;
 	int i;
-	my_sem *empty;
-	my_sem *full;
-	empty = my_sem_init(buff->size);
-	full = my_sem_init(0);
+	sem_t *empty;
+	sem_t *full;
+	empty = sem_open("emptySem",O_CREAT,0666,buff->size);
+	full = sem_open("fullSem",O_CREAT,0666,0);
 
 	shared = create_mem_segment(1234);
 	shared->buf = buff;

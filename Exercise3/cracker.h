@@ -17,8 +17,8 @@ struct params{
 	buffer* buf;
 	char* dictionary;
 	char* zipfile;
-	my_sem* empty;
-	my_sem* full;
+	sem_t* empty;
+	sem_t* full;
 	pthread_mutex_t *mutex;
 };
 
