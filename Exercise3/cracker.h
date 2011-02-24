@@ -10,7 +10,6 @@
 #include <unistd.h>
 #include "bounded_buffer.h"
 #include "file_reader.h"
-#include "my_sem.h"
 #define SHMSZ     27
 
 struct params{

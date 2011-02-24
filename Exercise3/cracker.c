@@ -136,13 +136,11 @@ void create_process(unsigned int nb_process, buffer* buff, char* file_to_crack, 
 	shared->dictionary=dictionary_file;
 	shared->zipfile = file_to_crack;
 	shared->full = full;
-	/*    shared_values = (params *)mmap(NULL, sizeof(params*), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANON, -1, 0); */
 	for(i=0; i<nb_process+1; i++){
 		pid=fork();
 		if(i==(nb_process)){
 			if(pid==0){
 			  	params* temp;
-			  	printf("creating fill proc\n");
 			  	temp= get_mem_segment(1234);
 				fill_buffer(temp);
 			}else if(pid<0){

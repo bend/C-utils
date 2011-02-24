@@ -4,20 +4,22 @@
 #define BUFFER_FULL -1;
 #define BUFFER_SUCCESS 0;
 
+#define BUFFER_LENGTH 10
+#define BUFFER_PASS_LENGTH 50
+
 #include <stdio.h>
 #include <stdlib.h>
-#include <pthread.h>
-
+#include <string.h>
+#include <semaphore.h>
 #include "zip_crack.h"
 
 struct buffer{
-	char** array;
+	char array[BUFFER_LENGTH][BUFFER_PASS_LENGTH];
     unsigned int first_pos;
     unsigned int last_pos;
 	unsigned int nb_elem;
 	unsigned int size;
-	char* name;
-	pthread_mutex_t *mutex;
+	sem_t *mutex;
 };
 typedef struct buffer buffer;
 

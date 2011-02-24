@@ -38,7 +38,6 @@ void test_buffer(){
 		assert(strcmp(bounded_buffer_get(buf),"test6")==0);
 		assert(bounded_buffer_get(buf) == NULL);
 
-		bounded_buffer_free(buf);
 
 }
 
