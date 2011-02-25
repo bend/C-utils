@@ -92,18 +92,14 @@ bounded_buffer_put(buffer *buf, char str[]){
 void
 bounded_buffer_proc_free(key_t key){
 	int id;
-	buffer *shm;
 
 	if ((id = shmget(key, sizeof(buffer*), IPC_CREAT | 0666)) < 0) {
 		perror("shmget");
 		exit(-1);
 	}
 
-	if(shmctl(id, IPC_RMID,NULL) == -1)
-            printf("shmctl (marking shm segment for removal)");
-	
-	if(shmdt(shm) == -1)
-		printf("shmctl (marking shm segment for removal)");
+	if(shmctl(id, IPC_RMID,NULL) <0 )
+        perror("error when detaching shared mem\n");
 }
 
 void 

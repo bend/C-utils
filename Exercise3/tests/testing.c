@@ -10,16 +10,17 @@ void test_file_reader(){
 	FILE* f;
 	char pass[50];
 		f=open_file("tests.txt");
-		get_next(f,pass);
+		assert(get_next(f,pass)==0);
 		assert(strcmp(pass,"line1")==0);
-		get_next(f,pass);
+		assert(get_next(f,pass)==0);
 		assert(strcmp(pass,"line2")==0);
-		get_next(f,pass);
+		assert(get_next(f,pass)==0);
 		assert(strcmp(pass, "line 3")==0);
-		get_next(f,pass);
+		assert(get_next(f,pass)==0);
 		assert(strcmp(pass, "line4 line5")==0);
-		get_next(f,pass);
+		assert(get_next(f,pass)==0);
 		assert(strcmp(pass, "1 2 3 4 5 6 7 8 9 10 11 12 13")==0);
+		assert(get_next(f,pass)==-1);
 }
 
 void test_buffer(){

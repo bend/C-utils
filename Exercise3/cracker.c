@@ -12,20 +12,20 @@ crack_password(void* arg){
 		if ((archive = zip_load_archive(p->zipfile)) == NULL) {
 			printf("Unable to open archive %s\n", p->zipfile);
 			exit(-1);
-		 }
+		}
 		do{	
 		 	if (sem_wait(p->full)==-1){
 			 	perror("error sem_wait on full w \n");
 				exit(-1);
 			}
 			if(bounded_buffer_get(buf,pass) == 0){
-				printf("testing pass %s \n",pass);
 				if(zip_test_password(archive, pass) == 0) {
 					p->found = true;
-				  	printf("[Password is: %s]\n", pass);
+					printf("###################################\n");
+				  	printf("####[Password is: %s]\n", pass);
+					printf("##################################\n");
 				}
 			}
-		
 			sem_post(p->empty);
 		}while(!p->found);
 
@@ -44,10 +44,12 @@ fill_buffer(void* arg){
 		file = open_file(p->dictionary);    /*            		  Open file        */
 		do{
 		  	if(sem_wait(p->empty)==-1)
-			  	perror("error on empty");
+			  	perror("error on sem empty");
 			if(buf->nb_elem < buf->size){
-				get_next(file, temp);
-				printf("producer  add %s\n",temp);
+				if(get_next(file, temp)<0){
+					p->found = true;
+					printf("Password not found\n");
+				}
 				bounded_buffer_put(buf, temp);
 			}
 			sem_post(p->full);
@@ -63,7 +65,6 @@ create_threads(unsigned int nb_threads, char* file_to_crack, char* dictionary_fi
 	int i;
 	int pthread_join_res;
 	params *crack_params;
-
 		sem_unlink(SEM_FULL);
 		sem_unlink(SEM_EMPTY);
 		threads = malloc(sizeof(pthread_t)*nb_threads+1);			/* nb_threads+1 for storing the bounded_buffer thread*/
@@ -71,14 +72,12 @@ create_threads(unsigned int nb_threads, char* file_to_crack, char* dictionary_fi
 			perror("malloc failed");
 			exit(-1);
 		}
-		
 		crack_params = malloc(sizeof(params));
 		if(crack_params == NULL){
 			perror("malloc failed");
 			free(threads);
 			exit(-1);
 		}
-
 		crack_params->buf = bounded_buffer_new();
 		crack_params->zipfile= file_to_crack;
 		crack_params->dictionary= dictionary_file;
@@ -105,7 +104,6 @@ create_threads(unsigned int nb_threads, char* file_to_crack, char* dictionary_fi
 		}
 		for(i=0; i<nb_threads+1; i++)
 			pthread_join_res = pthread_join(threads[i], NULL);
-		
 		bounded_buffer_free(crack_params->buf);
 		free(crack_params);
 		free(threads);
@@ -120,13 +118,11 @@ void create_process(unsigned int nb_process, char* file_to_crack, char* dictiona
 	int i;
 	sem_unlink(SEM_EMPTY);
 	sem_unlink(SEM_FULL);
-
 		shared = create_mem_segment(PARAMS_KEY);
 		shared->buf = bounded_buffer_proc_new(BB_KEY);
 		shared->dictionary=dictionary_file;
 		shared->zipfile = file_to_crack;
 		shared->found = false;
-		                                                       
 		shared->empty = sem_open(SEM_EMPTY,O_CREAT,0666,shared->buf->size);  
 		shared->full = sem_open(SEM_FULL,O_CREAT,0666,0);             
 		for(i=0; i<nb_process+1; i++){
@@ -140,7 +136,6 @@ void create_process(unsigned int nb_process, char* file_to_crack, char* dictiona
 				}
 			}else{	
 				if(pid==0){
-					printf("creating crack  proc\n");
 					crack_password(shared);
 				}else if(pid<0){
 					perror("fork error");
@@ -167,7 +162,6 @@ void start_cracking(char tp, unsigned int nb_pt, char* file_to_crack, char* dict
 params* create_mem_segment(key_t key ){
     int shmid;  
   	params *shm,*r;
-  
 		if ((shmid = shmget(key, sizeof(shm), IPC_CREAT | 0666)) < 0) {
 			perror("shmget");
 			exit(-1);
@@ -200,17 +194,13 @@ params*  get_mem_segment(key_t key){
 
 void free_mem_segment(key_t key){
 	int id;
-	params *shm;
 
 	if ((id = shmget(key, sizeof(params*), IPC_CREAT | 0666)) < 0) {
 		perror("shmget");
 		exit(-1);
 	}
 
-	if(shmctl(id, IPC_RMID,NULL) == -1)
-            printf("shmctl (marking shm segment for removal)");
-	
-	if(shmdt(shm) == -1)
-		printf("shmctl (marking shm segment for removal)");
-
+	if(shmctl(id, IPC_RMID,NULL) < 0){
+		perror("error while detaching shared mem");
+	}
 }

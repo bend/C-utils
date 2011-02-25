@@ -17,12 +17,15 @@ int close_file(FILE* file){
 	return fclose(file);
 }
 
-void
+int
 get_next(FILE* f, char* pass){
 	int length;
 		fgets(pass,50,f);
 		length = strlen(pass);
+		if(length <2)
+			return -1;
 		pass[length-1] = '\0';
+		return 0;
 }
 /*
 int main(){

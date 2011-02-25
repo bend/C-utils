@@ -7,14 +7,14 @@
 void
 usage (void)
 {
-    printf("zipcrack ZIP_FILE [PASSWORD1 [PASSWORD2 ...]]\n");
+    printf("zipcrack [-t NBTHREADS / -p NBPROCESS] -d DICTINARY ZIP_FILE]\n");
 }
 
 
 void checkParams(char* file, char* pflag, char* tflag, char* dflag){
     if(dflag ==NULL){
-	usage();
-	exit(-1);
+		usage();
+		exit(-1);
     }if(pflag!=NULL && tflag!=NULL){
         usage();
         exit(-1);
@@ -57,11 +57,14 @@ main (int argc, char ** argv)
         }
        
         file = argv[argc-1];
-		/*checkParams(file, pflag, tflag,dflag);*/ /*Exits if arguments are wrong*/
+		checkParams(file, pflag, tflag,dflag); /*Exits if arguments are wrong*/
 	
 	if(pflag){
+	  	printf("Password cracking of archive %s with dictionary %s started using %d process\n",file,dflag,atoi(pflag));
 	    start_cracking('p',atoi(pflag), file, dflag);
+
 	}else{
+	  	printf("Password cracking of archive %s with dictionary %s started using %d threads\n",file,dflag,atoi(tflag));
 	    start_cracking('t',atoi(tflag), file, dflag);
 	}
   

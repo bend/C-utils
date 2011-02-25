@@ -2,7 +2,7 @@
 
 /* Returns the next line in the file if it exist */
 /* Otherwise returns NULL 						 */
-void get_next(FILE* f, char* pass);
+int get_next(FILE* f, char* pass);
 
 /* Opens the file in READONLY mode 		*/
 /* Returns a FILE pointer if succeeded  */
