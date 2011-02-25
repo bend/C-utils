@@ -7,7 +7,7 @@
 void
 usage (void)
 {
-    printf("zipcrack [-t NBTHREADS / -p NBPROCESS] -d DICTINARY ZIP_FILE]\n");
+    printf("Usage: [zipcrack [-t | -p ] <NB> <-d DICTINARY> <ZIP_FILE>]\n");
 }
 
 

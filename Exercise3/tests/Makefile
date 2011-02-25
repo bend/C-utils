@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-W -Wall -Werror -ansi -pedantic -g
+CFLAGS=-W -Wall -Werror -ansi -pedantic 
 EXEC = tests
 
 all: $(EXEC)

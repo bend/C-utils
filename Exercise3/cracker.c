@@ -62,7 +62,7 @@ void
 create_threads(unsigned int nb_threads, char* file_to_crack, char* dictionary_file){
 	pthread_t *threads;										/*Array of threads*/
 	int rc;
-	int i;
+	unsigned int i;
 	int pthread_join_res;
 	params *crack_params;
 		sem_unlink(SEM_FULL);
@@ -114,10 +114,15 @@ create_threads(unsigned int nb_threads, char* file_to_crack, char* dictionary_fi
 
 void create_process(unsigned int nb_process, char* file_to_crack, char* dictionary_file){
 	params* shared;
-	pid_t pid;
-	int i;
+	unsigned int i;
+	pid_t *pids;
 	sem_unlink(SEM_EMPTY);
 	sem_unlink(SEM_FULL);
+		pids = malloc(sizeof(pid_t)*(nb_process +1));
+		if(pids == NULL){
+			perror("malloc failed");
+			exit(-1);
+		}
 		shared = create_mem_segment(PARAMS_KEY);
 		shared->buf = bounded_buffer_proc_new(BB_KEY);
 		shared->dictionary=dictionary_file;
@@ -126,25 +131,25 @@ void create_process(unsigned int nb_process, char* file_to_crack, char* dictiona
 		shared->empty = sem_open(SEM_EMPTY,O_CREAT,0666,shared->buf->size);  
 		shared->full = sem_open(SEM_FULL,O_CREAT,0666,0);             
 		for(i=0; i<nb_process+1; i++){
-			pid=fork();
+			pids[i]=fork();
 			if(i==(nb_process)){
-				if(pid==0){
+				if(pids[i]==0){
 					fill_buffer(shared);
-				}else if(pid<0){
+				}else if(pids[i]<0){
 					perror("fork error");
 					exit(-1);
 				}
 			}else{	
-				if(pid==0){
+				if(pids[i]==0){
 					crack_password(shared);
-				}else if(pid<0){
+				}else if(pids[i]<0){
 					perror("fork error");
 					exit(-1);
 				}
 			}	  
 		}
 		for(i=0; i<nb_process; i++)
-			wait(&i);
+			waitpid(pids[i], NULL, 0);	
 		sem_unlink(SEM_EMPTY);
 		sem_unlink(SEM_FULL);
 		bounded_buffer_proc_free(BB_KEY);
