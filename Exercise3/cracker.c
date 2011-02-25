@@ -6,7 +6,7 @@ void*
 crack_password(void* arg){
   	params* p;
 	buffer* buf;
-	char* pass;
+	char pass[50];
 	struct zip_archive * archive;
 		p =(params*)arg;
 		buf = p->buf;
@@ -17,17 +17,13 @@ crack_password(void* arg){
 		do{	
 		  	if (sem_wait(p->full)==-1)
 			 	perror("error sem_wait on full w \n");
-			pass = bounded_buffer_get(buf);
-			/*if(pass != NULL){*/
-				printf("test pass %s\n",pass);
+			bounded_buffer_get(buf,pass);
+				printf("testing pass %s \n",pass);
 				if(zip_test_password(archive, pass) == 0) {
-					printf("Password is: %s\n", pass);
-					free(pass);
+					printf("[Password is: %s]\n", pass);
 					bounded_buffer_free(buf);
-					free(p);
 					exit(0);
-				}
-			/*}else printf("looping\n");*/
+			}
 			sem_post(p->empty);
 		}while(1);
 
@@ -40,16 +36,16 @@ void*
 fill_buffer(void* arg){
 	params* p;
 	buffer* buf;
-	char* temp;
+	char temp[BUFFER_LENGTH];
 	FILE* file;
 		p=(params*)arg;
 		buf=p->buf;
 		file = open_file(p->dictionary);    /*            		  Open file        */
 		do{
 		  	if(sem_wait(p->empty)==-1)
-			  perror("error on empty");
+			  	perror("error on empty");
 			if(buf->nb_elem < buf->size){
-				temp = get_next(file);
+				get_next(file, temp);
 				printf("producer  add %s\n",temp);
 				bounded_buffer_put(buf, temp);
 			}
@@ -165,7 +161,7 @@ void create_process(unsigned int nb_process, buffer* buff, char* file_to_crack, 
 
 void start_cracking(char tp, unsigned int nb_pt, char* file_to_crack, char* dictionary_file){
 	buffer* buf;
-		buf=bounded_buffer_new(10);
+		buf=bounded_buffer_new();
 		if(tp=='p')
 			create_process(nb_pt, buf,file_to_crack, dictionary_file);
 		else

@@ -6,7 +6,7 @@
 
 #define BUFFER_LENGTH 10
 #define BUFFER_PASS_LENGTH 50
-
+#define BUFFER_MUTEX "bufmutex"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -24,10 +24,10 @@ struct buffer{
 typedef struct buffer buffer;
 
 /*
-* Creates a bounded buffer of size size
+* Creates a bounded buffer of size BUFFER_LENGTH
 * @return  buffer : a pointer to the struct bounded buffer
 */
-buffer* bounded_buffer_new(unsigned int size);
+buffer* bounded_buffer_new();
 
 
 /*
@@ -42,7 +42,7 @@ int bounded_buffer_put(buffer *buf,  char* str);
 * returns NULL if buffer empty
 * @param buf the buffer
 */
-char* bounded_buffer_get(buffer *buf);
+void bounded_buffer_get(buffer *buf, char* p);
 
 /*
 * Frees the allocalted mem for the buffer

@@ -17,24 +17,12 @@ int close_file(FILE* file){
 	return fclose(file);
 }
 
-char*
-get_next(FILE* f){
-	char temp[50];
+void
+get_next(FILE* f, char* pass){
 	int length;
-	char* final_string;
-		fgets(temp,50,f);
-		if(temp==NULL || temp[0]==EOF)
-			return NULL;
-		length = strlen(temp);
-		if(length<2)
-			return NULL;
-		final_string = malloc(sizeof(char)*length);
-		if(final_string == NULL){
-			perror("malloc failed");
-			exit(-1);
-		}	
-		strncat(final_string, temp,length-1);
-		return final_string;
+		fgets(pass,50,f);
+		length = strlen(pass);
+		pass[length-1] = '\0';
 }
 /*
 int main(){

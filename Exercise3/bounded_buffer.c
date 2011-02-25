@@ -1,52 +1,50 @@
 #include "bounded_buffer.h"
 
 buffer*  
-bounded_buffer_new(unsigned int size){
+bounded_buffer_new(){
 	buffer *buf;
 	buf = malloc(sizeof(buffer));
 	if(buf == NULL){
 		perror("Error in malloc");
 		exit(-1);
 	}
-	/*buf->array = malloc(sizeof(char*)*size);
-	if(buf->array == NULL){
-		free(buf);
-		perror("malloc error");
-		exit(-1);
-	}*/
-	buf->mutex = sem_open("BUFFER_MUTER", O_CREAT, 0666,1);
+	sem_unlink(BUFFER_MUTEX);
+	buf->mutex = sem_open(BUFFER_MUTEX, O_CREAT, 0666,1);
 	buf->last_pos  =0;
 	buf->first_pos =0;
 	buf->nb_elem   =0;
-	buf->size = size;
+	buf->size = BUFFER_LENGTH;
 	return buf;
 }
 
 
 
-char* 
-bounded_buffer_get(buffer *buf){
-	char* str;
-		if(sem_wait(buf->mutex)==-1)
-		  	perror("mutex wait failed");
-		if(buf->nb_elem == 0){
-		  if(sem_post(buf->mutex)==-1)
+void
+bounded_buffer_get(buffer *buf, char p[]){
+	int i;
+  	if(sem_wait(buf->mutex)==-1)
+		perror("mutex wait failed");
+	if(buf->nb_elem == 0){
+		if(sem_post(buf->mutex)==-1)
 			perror("sem_wait error");
-		  return NULL;
-		}
-		str = buf->array[buf->first_pos];
-		buf->first_pos = (buf->first_pos + 1) % buf->size;
-		buf->nb_elem--;
-		if(sem_post(buf->mutex))
-			perror("sem_post failed");
-		return str;
+	}
+	i = 0;
+	while(buf->array[buf->first_pos][i] !='\0'){
+		p[i]= buf->array[buf->first_pos][i];
+		i++;
+	}
+	p[i] = '\0';
+	buf->first_pos = (buf->first_pos + 1) % buf->size;
+	buf->nb_elem--;
+	if(sem_post(buf->mutex))
+		perror("sem_post failed");
 }
 
 
 int
 bounded_buffer_put(buffer *buf, char str[]){
   	unsigned int i;
-	if(sem_post(buf->mutex)==-1)
+	if(sem_wait(buf->mutex)==-1)
 		perror("sem_post error");
   	if(buf->nb_elem == buf->size){
 	  	if(sem_post(buf->mutex)==-1)
@@ -68,9 +66,5 @@ bounded_buffer_put(buffer *buf, char str[]){
 
 void 
 bounded_buffer_free(buffer *buf){
-	unsigned int i;
-		for(i=buf->first_pos; i<buf->last_pos; i++)
-			free(buf->array[i]);
-		free(buf->array);
-		free(buf);
+	free(buf);
 }
