@@ -40,8 +40,6 @@ bounded_buffer_proc_new(){
 	buf->nb_elem = 0;
 	buf->size = BUFFER_LENGTH;
 	return buf;                                                          
-	                                                                      
-	                                                                       
 }
 
 

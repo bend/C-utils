@@ -44,7 +44,7 @@ void* crack_password(void* arg);
 * @params nb_threads: the number of threads to be created
 * @params p : params containing the buffer and the filename of the file to crakc(see params declaration on top of file)
 */
-void create_threads(unsigned int nb_threads, buffer *buf, char* file_to_crack, char* dictionary_file);
+void create_threads(unsigned int nb_threads, char* file_to_crack, char* dictionary_file);
 
 
 /*          
@@ -52,7 +52,7 @@ void create_threads(unsigned int nb_threads, buffer *buf, char* file_to_crack, c
 * @params nb_process: the number of process to be created
 * @params p : params containing the buffer and the filename of the file to crack (see params declaration on top of file)
 */
-void create_process(unsigned int nb_process, buffer* buff, char* file_to_crack, char* dictionary_file);
+void create_process(unsigned int nb_process,  char* file_to_crack, char* dictionary_file);
 
 /*
 * Starts the crack by creating process or threads (tp=='t' for threads ana 'p' for process)
