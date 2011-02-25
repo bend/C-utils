@@ -121,8 +121,8 @@ void create_process(unsigned int nb_process, char* file_to_crack, char* dictiona
 	sem_unlink(SEM_EMPTY);
 	sem_unlink(SEM_FULL);
 
-		shared = create_mem_segment(1234);
-		shared->buf = bounded_buffer_proc_new();
+		shared = create_mem_segment(PARAMS_KEY);
+		shared->buf = bounded_buffer_proc_new(BB_KEY);
 		shared->dictionary=dictionary_file;
 		shared->zipfile = file_to_crack;
 		shared->found = false;
@@ -148,9 +148,12 @@ void create_process(unsigned int nb_process, char* file_to_crack, char* dictiona
 				}
 			}	  
 		}
-		wait(NULL);
+		for(i=0; i<nb_process; i++)
+			wait(&i);
 		sem_unlink(SEM_EMPTY);
 		sem_unlink(SEM_FULL);
+		bounded_buffer_proc_free(BB_KEY);
+		free_mem_segment(PARAMS_KEY);
 }
 
 
@@ -180,7 +183,7 @@ params* create_mem_segment(key_t key ){
 
 params*  get_mem_segment(key_t key){
 	int shmid;
-	params* shm,*r;
+	params *shm,*r;
 		
 		if ((shmid = shmget(key,sizeof(params*) , 0666)) < 0) {
 			perror("shmget");
@@ -195,3 +198,19 @@ params*  get_mem_segment(key_t key){
 }
 
 
+void free_mem_segment(key_t key){
+	int id;
+	params *shm;
+
+	if ((id = shmget(key, sizeof(params*), IPC_CREAT | 0666)) < 0) {
+		perror("shmget");
+		exit(-1);
+	}
+
+	if(shmctl(id, IPC_RMID,NULL) == -1)
+            printf("shmctl (marking shm segment for removal)");
+	
+	if(shmdt(shm) == -1)
+		printf("shmctl (marking shm segment for removal)");
+
+}

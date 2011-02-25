@@ -20,8 +20,8 @@
 
 struct buffer{
 	char array[BUFFER_LENGTH][BUFFER_PASS_LENGTH];
-    unsigned int first_pos;
-    unsigned int last_pos;
+	unsigned int first_pos;
+	unsigned int last_pos;
 	unsigned int nb_elem;
 	unsigned int size;
 	sem_t *mutex;
@@ -34,7 +34,7 @@ typedef struct buffer buffer;
 */
 buffer* bounded_buffer_new();
 
-buffer* bounded_buffer_proc_new();
+buffer* bounded_buffer_proc_new(key_t key);
 /*
 * Adds the char* str to the boundedBuffer bb
 * Returns 0 if item successfuly added
@@ -54,6 +54,11 @@ int  bounded_buffer_get(buffer *buf, char* p);
 * Frees also each char* in it
 */
 void bounded_buffer_free(buffer *buf);
+
+/*
+ * Frees the shared buffer with key key
+ */
+void bounded_buffer_proc_free(key_t key);
 
 
 

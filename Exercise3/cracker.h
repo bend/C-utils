@@ -1,5 +1,6 @@
 #ifndef __CRACKER_H__
 #define __CRACKER_H__
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
@@ -15,7 +16,8 @@
 
 #define SEM_FULL "semFull"
 #define SEM_EMPTY "semEmpty"
-
+#define BB_KEY	5678
+#define PARAMS_KEY 1234
 struct params{
 	buffer* buf;
 	char* dictionary;
@@ -63,9 +65,23 @@ void create_process(unsigned int nb_process,  char* file_to_crack, char* diction
 */
 void start_cracking(char tp, unsigned int nb_pt, char* file_to_crack, char* dictionary_file);
 
+/*
+* Create a shared memory segment for Params.
+* @return returns a pointer to this memory
+*/
 params* create_mem_segment(key_t key );
 
+/*
+* Returns a pointer to the shared memory of key key
+*/
 params*  get_mem_segment(key_t key );
+
+/*
+ * Frees the memory of key key
+ * 
+ */
+void free_mem_segment(key_t key);
+
 #endif
 
 

@@ -18,12 +18,10 @@ bounded_buffer_new(){
 }
 
 buffer*
-bounded_buffer_proc_new(){
+bounded_buffer_proc_new(key_t key){
 	buffer *r, *buf;
 	int shmid;                                   
-	key_t key;
 
-	key = 5678;		                                                                         
     if ((shmid = shmget(key, sizeof(buffer*), IPC_CREAT | 0666)) < 0) {    
     	perror("shmget");                                              
 		exit(-1);                                                      
@@ -91,6 +89,22 @@ bounded_buffer_put(buffer *buf, char str[]){
 	return BUFFER_SUCCESS;
 }
 
+void
+bounded_buffer_proc_free(key_t key){
+	int id;
+	buffer *shm;
+
+	if ((id = shmget(key, sizeof(buffer*), IPC_CREAT | 0666)) < 0) {
+		perror("shmget");
+		exit(-1);
+	}
+
+	if(shmctl(id, IPC_RMID,NULL) == -1)
+            printf("shmctl (marking shm segment for removal)");
+	
+	if(shmdt(shm) == -1)
+		printf("shmctl (marking shm segment for removal)");
+}
 
 void 
 bounded_buffer_free(buffer *buf){
