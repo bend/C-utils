@@ -9,8 +9,10 @@
 #include <sys/shm.h>
 #include <unistd.h>
 #include <stdbool.h>
+
 #include "bounded_buffer.h"
 #include "file_reader.h"
+
 #define SEM_FULL "semFull"
 #define SEM_EMPTY "semEmpty"
 

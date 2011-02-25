@@ -12,6 +12,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <semaphore.h>
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
+
 #include "zip_crack.h"
 
 struct buffer{
@@ -30,7 +34,7 @@ typedef struct buffer buffer;
 */
 buffer* bounded_buffer_new();
 
-
+buffer* bounded_buffer_proc_new();
 /*
 * Adds the char* str to the boundedBuffer bb
 * Returns 0 if item successfuly added

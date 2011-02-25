@@ -17,15 +17,44 @@ bounded_buffer_new(){
 	return buf;
 }
 
+buffer*
+bounded_buffer_proc_new(){
+	buffer *r, *buf;
+	int shmid;                                   
+	key_t key;
+
+	key = 5678;		                                                                         
+    if ((shmid = shmget(key, sizeof(buffer*), IPC_CREAT | 0666)) < 0) {    
+    	perror("shmget");                                              
+		exit(-1);                                                      
+	}                                                                  
+	if ((r = shmat(shmid, NULL, 0)) == (buffer*) -1) {               
+	    perror("shmat");                                               
+	    exit(-1);                                                      
+	}                                                                  
+	buf = r;
+	sem_unlink(BUFFER_MUTEX);
+	buf->mutex = sem_open(BUFFER_MUTEX, O_CREAT, 0666, 1);
+	buf->last_pos = 0;
+	buf->first_pos =0;
+	buf->nb_elem = 0;
+	buf->size = BUFFER_LENGTH;
+	return buf;                                                          
+	                                                                      
+	                                                                       
+}
+
 
 int
 bounded_buffer_get(buffer *buf, char p[]){
 	int i;
   	if(sem_wait(buf->mutex)==-1)
-		perror("mutex wait failed");
+	  perror("mutex wait failed");
 	if(buf->nb_elem == 0){
-		if(sem_post(buf->mutex)==-1)
+		if(sem_post(buf->mutex)==-1){
 			perror("sem_wait error");
+			exit(-1);
+		}
 		return BUFFER_EMPTY;
 	}
 	i = 0;

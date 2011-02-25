@@ -1,7 +1,6 @@
 #include "cracker.h"
 
 
-
 void*
 crack_password(void* arg){
   	params* p;
@@ -15,19 +14,22 @@ crack_password(void* arg){
 			exit(-1);
 		 }
 		do{	
-		  	if (sem_wait(p->full)==-1)
+		 	/*if (sem_wait(p->full)==-1){
 			 	perror("error sem_wait on full w \n");
-			bounded_buffer_get(buf,pass);
+				exit(-1);
+			}*/
+			if(bounded_buffer_get(buf,pass) == 0){
 				printf("testing pass %s \n",pass);
 				if(zip_test_password(archive, pass) == 0) {
 					p->found = true;
 				  	printf("[Password is: %s]\n", pass);
+				}
 			}
+		
 			sem_post(p->empty);
 		}while(!p->found);
 
 		pthread_exit(NULL);
-
 }
 
 
@@ -41,9 +43,9 @@ fill_buffer(void* arg){
 		buf=p->buf;
 		file = open_file(p->dictionary);    /*            		  Open file        */
 		do{
-		  	if(sem_wait(p->empty)==-1)
+		  	/*if(sem_wait(p->empty)==-1)
 			  	perror("error on empty");
-			if(buf->nb_elem < buf->size){
+			*/if(buf->nb_elem < buf->size){
 				get_next(file, temp);
 				printf("producer  add %s\n",temp);
 				bounded_buffer_put(buf, temp);
@@ -124,38 +126,36 @@ void create_process(unsigned int nb_process, buffer* buff, char* file_to_crack, 
 	sem_t *full;
 	sem_unlink(SEM_EMPTY);
 	sem_unlink(SEM_FULL);
+
 	empty = sem_open(SEM_EMPTY,O_CREAT,0666,buff->size);
 	full = sem_open(SEM_FULL,O_CREAT,0666,0);
 
 	shared = create_mem_segment(1234);
-	shared->buf = buff;
+	shared->buf = bounded_buffer_proc_new();
 	shared->dictionary=dictionary_file;
 	shared->zipfile = file_to_crack;
 	shared->full = full;
+	shared->found = false;
 	for(i=0; i<nb_process+1; i++){
 		pid=fork();
 		if(i==(nb_process)){
 			if(pid==0){
-			  	params* temp;
-			  	temp= get_mem_segment(1234);
-				fill_buffer(temp);
+				fill_buffer(shared);
 			}else if(pid<0){
 				perror("fork error");
 				exit(-1);
 			}
 		}else{	
 			if(pid==0){
-			  	params* temp;
 			  	printf("creating crack  proc\n");
-				temp = get_mem_segment(1234);
-				crack_password(temp);
+				crack_password(shared);
 			}else if(pid<0){
 				perror("fork error");
 				exit(-1);
 			}
 		}	  
 	}
-	wait(0);
+	wait(NULL);
 	bounded_buffer_free(buff);
 	sem_unlink(SEM_EMPTY);
 	sem_unlink(SEM_FULL);
@@ -170,7 +170,6 @@ void start_cracking(char tp, unsigned int nb_pt, char* file_to_crack, char* dict
 		else
 			create_threads(nb_pt,buf, file_to_crack, dictionary_file);
 }
-
 
 params* create_mem_segment(key_t key ){
     int shmid;  
