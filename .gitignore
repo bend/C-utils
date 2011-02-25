@@ -1,5 +1,6 @@
 *.o
 test
+tests
 *.swp
 rarcrack
 zipcrack
