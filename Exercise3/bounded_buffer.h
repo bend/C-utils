@@ -3,10 +3,11 @@
 
 #define BUFFER_FULL -1;
 #define BUFFER_SUCCESS 0;
-
+#define BUFFER_EMPTY -1;
 #define BUFFER_LENGTH 10
 #define BUFFER_PASS_LENGTH 50
 #define BUFFER_MUTEX "bufmutex"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -42,7 +43,7 @@ int bounded_buffer_put(buffer *buf,  char* str);
 * returns NULL if buffer empty
 * @param buf the buffer
 */
-void bounded_buffer_get(buffer *buf, char* p);
+int  bounded_buffer_get(buffer *buf, char* p);
 
 /*
 * Frees the allocalted mem for the buffer

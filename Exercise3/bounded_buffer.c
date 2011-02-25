@@ -18,8 +18,7 @@ bounded_buffer_new(){
 }
 
 
-
-void
+int
 bounded_buffer_get(buffer *buf, char p[]){
 	int i;
   	if(sem_wait(buf->mutex)==-1)
@@ -27,6 +26,7 @@ bounded_buffer_get(buffer *buf, char p[]){
 	if(buf->nb_elem == 0){
 		if(sem_post(buf->mutex)==-1)
 			perror("sem_wait error");
+		return BUFFER_EMPTY;
 	}
 	i = 0;
 	while(buf->array[buf->first_pos][i] !='\0'){
@@ -38,6 +38,7 @@ bounded_buffer_get(buffer *buf, char p[]){
 	buf->nb_elem--;
 	if(sem_post(buf->mutex))
 		perror("sem_post failed");
+	return BUFFER_SUCCESS;
 }
 
 
