@@ -8,17 +8,19 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <unistd.h>
+#include <stdbool.h>
 #include "bounded_buffer.h"
 #include "file_reader.h"
-#define SHMSZ     27
+#define SEM_FULL "semFull"
+#define SEM_EMPTY "semEmpty"
 
 struct params{
 	buffer* buf;
 	char* dictionary;
 	char* zipfile;
+	bool found;
 	sem_t* empty;
 	sem_t* full;
-	pthread_mutex_t *mutex;
 };
 
 typedef struct params params;

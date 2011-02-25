@@ -68,4 +68,5 @@ bounded_buffer_put(buffer *buf, char str[]){
 void 
 bounded_buffer_free(buffer *buf){
 	free(buf);
+	sem_unlink(BUFFER_MUTEX);
 }
