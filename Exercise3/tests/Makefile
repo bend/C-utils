@@ -17,6 +17,6 @@ testing.o: testing.c ../file_reader.h ../bounded_buffer.h
                             
 clean:
 	@rm *.o
-mrproper: clean
+mrproper: 
 	@rm $(EXEC)
 
