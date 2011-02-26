@@ -54,6 +54,7 @@ fill_buffer(void* arg){
 			}
 			sem_post(p->full);
 		}while(temp!=NULL && !p->found);
+		close_file(file);
 	pthread_exit(NULL);
 }
 
