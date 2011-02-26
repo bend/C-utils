@@ -1,6 +1,0 @@
-
-To compile Librairy:
-$ cd unrar/
-$ make lib -f makefile.unix
-$ cp libunrar.so ..
-
