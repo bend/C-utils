@@ -26,7 +26,10 @@ crack_password(void* arg){
 					printf("##################################\n");
 				}
 			}
-			sem_post(p->empty);
+			if(sem_post(p->empty)==-1){
+			 	perror("error sem_post on full");
+				exit(-1);
+			}
 		}while(!p->found);
 
 		pthread_exit(NULL);
