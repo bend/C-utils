@@ -1,5 +1,5 @@
 CFLAGS+=-W -Wall -Lpthread -Werror -ansi -pedantic 
-EXEC=zipcrack
+EXEC=matrix
 SOURCES=$(wildcard *.c)
 OBJECTS=$(SOURCES:.c=.o)
 
