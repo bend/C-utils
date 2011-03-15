@@ -10,7 +10,7 @@ open_file(const char* path){
 			perror("cannot open file");
 			exit(-1);
 		}	
-		return fopen(path, "r");
+		return f;
 }
 
 int close_file(FILE* file){

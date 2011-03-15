@@ -1,9 +1,13 @@
 *.o
 test
 tests
+test_file
+test_matrix
+test_linked_list
 *.swp
 rarcrack
 zipcrack
 .DS_Store
 *.zip
 *.rar
+tag
