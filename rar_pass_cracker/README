@@ -1,3 +1,5 @@
+This is a rarcrack password cracker that uses the brute force attack
+
 To compile Librairy:
 $ cd unrar/
 $ make lib -f makefile.unix
