@@ -1,0 +1,23 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+EATING	philosophers_problem.c	8;"	d	file:
+HUNGRY	philosophers_problem.c	7;"	d	file:
+LEFT	philosophers_problem.c	9;"	d	file:
+MUTEX_NAME	philosophers_problem.c	11;"	d	file:
+N	philosophers_problem.c	5;"	d	file:
+RIGHT	philosophers_problem.c	10;"	d	file:
+SEM_NAME	philosophers_problem.c	12;"	d	file:
+THINKING	philosophers_problem.c	6;"	d	file:
+main	message_passing_pipe.c	/^int main()$/;"	f
+main	philosophers_problem.c	/^int main(){$/;"	f
+mutex	philosophers_problem.c	/^sem_t *mutex;$/;"	v
+philospher	philosophers_problem.c	/^void *philospher(void *num){$/;"	f
+put_fork	philosophers_problem.c	/^void put_fork(int ph_num){$/;"	f
+s	philosophers_problem.c	/^sem_t *s[N];$/;"	v
+state	philosophers_problem.c	/^int state[N];$/;"	v
+take_fork	philosophers_problem.c	/^void take_fork(int ph_num){$/;"	f
+test	philosophers_problem.c	/^void test(int ph_num){$/;"	f
