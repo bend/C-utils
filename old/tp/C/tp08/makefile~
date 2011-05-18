@@ -1,0 +1,12 @@
+
+all : main.o traitement.o entree_sortie.o 
+	gcc main.o traitement.o entree_sortie.o -o monprog
+main.o : main.c traitement.h entree_sortie.h
+	gcc -c main.c -Wall
+traitement.o : traitement.c
+	gcc -c traitement.c
+entree_sortie.o : entree_sortie.c
+	gcc -c entree_sortie.c -Wall
+	
+clean : 
+	rm *.o

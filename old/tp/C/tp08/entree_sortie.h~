@@ -1,0 +1,10 @@
+#include "image.h"
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+
+int EcrireImagePGM(char* nomFichier, struct image im) ;
+void SeuillerImage(struct image* im, unsigned char seuil);
+struct image LireImagePGM(char* nomFichier);
+
+
