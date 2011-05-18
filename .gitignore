@@ -1,4 +1,5 @@
-old
-*.swp
-*.o
+tag
 tags
+*.o
+*.swp
+old
