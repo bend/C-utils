@@ -9,10 +9,11 @@
 #define MUTEX 		"mutex"
 #define MUTEX_FREE 	"mutex_free"
 
-struct my_sem{
-	int value;
-	sem_t *mutex_free;
-	sem_t *mutex;
+struct my_sem
+{
+    int value;
+    sem_t* mutex_free;
+    sem_t* mutex;
 };
 
 typedef struct my_sem my_sem;
@@ -23,7 +24,7 @@ typedef struct my_sem my_sem;
  * @param sem: a pointer to the pointer to my_sem descriptor
  * @return 0 if success, -1 otherwise
  */
-int 
+int
 my_sem_init(my_sem** sem, unsigned int nb);
 
 /*
@@ -32,16 +33,16 @@ my_sem_init(my_sem** sem, unsigned int nb);
  * @param sem: pointer to my_sem descriptor
  * @return 0 if success, -1 otherwise
  */
-int 
-my_sem_wait(my_sem *sem, unsigned int nb);
+int
+my_sem_wait(my_sem* sem, unsigned int nb);
 
 /*
  * posts the semaphore and increments it of nb
  * @param nb the value of incrementation
  * @param sem: pointer to my_sem descriptor
  */
-int 
-my_sem_post(my_sem *sem, unsigned int nb);
+int
+my_sem_post(my_sem* sem, unsigned int nb);
 
 /*
  * Closes the semaphore and frees the structure
@@ -49,6 +50,6 @@ my_sem_post(my_sem *sem, unsigned int nb);
  * @return 0 if success -1 otherwise
  */
 int
-my_sem_close(my_sem *sem);
+my_sem_close(my_sem* sem);
 
 #endif
